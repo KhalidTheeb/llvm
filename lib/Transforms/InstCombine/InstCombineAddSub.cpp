@@ -902,6 +902,10 @@ bool InstCombiner::WillNotOverflowSignedAdd(Value *LHS, Value *RHS,
   APInt RHSKnownOne(BitWidth, 0);
   computeKnownBits(RHS, RHSKnownZero, RHSKnownOne, 0, &CxtI);
 
+    // Doubling of a postive number smaller than 4026531840 or 0xf0000000 should never overflow.
+     if ((RHS > 0) && (LHS & 0xf0000000) == 0 )
+     return true;
+  
   // Addition of two 2's compliment numbers having opposite signs will never
   // overflow.
   if ((LHSKnownOne[BitWidth - 1] && RHSKnownZero[BitWidth - 1]) ||
